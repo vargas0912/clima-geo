@@ -1,9 +1,24 @@
+const fs = require('fs');
+
 const axios = require('axios');
 
-class Search {    
+class Search {   
+    history = [];
+    pathDB = './db/database.json';
+
     constructor(){
         //ToDo: Leer BD si existe
+        this.readDB()
+;    }
 
+    get capitalizeHistory(){
+        //caitalizar 
+        return this.history.map( place => {
+            let words = place.split(' ');
+            words = words.map( w => w[0].toUpperCase() + w.substring(1));
+
+            return words.join(' ');
+        });
     }
 
     get paramsMapbox(){
@@ -71,6 +86,46 @@ class Search {
         } catch (error) {
             console.log(error);
         }
+    }
+
+
+    addHistory (place = '') {
+        //Prevenir duplicados
+        if (this.history.includes( place.toLocaleLowerCase())){
+            return;
+        }
+
+        this.history = this.history.splice(0, 5);
+
+        this.history.unshift( place.toLocaleLowerCase() );
+
+        // save data
+        this.saveDB();
+    }
+
+    saveDB(){
+        const payLoad = {
+            history: this.history
+        };
+
+        fs.writeFileSync(this.pathDB, JSON.stringify( payLoad ));
+    }
+
+    async readDB(){
+        // verificar si existe
+        const file = this.pathDB;
+
+        if (!fs.existsSync (file)){
+            return null;
+        }
+
+        //si existe cargar info redfilesync {encoding utf-8}
+        const info = fs.readFileSync ( file, { encoding: 'utf-8'} );
+    
+        const data = JSON.parse( info );        
+        this.history = data.history;
+        
+        
     }
 }
 

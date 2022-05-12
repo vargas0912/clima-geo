@@ -32,8 +32,13 @@ const main = async() => {
                 
                 // Usuario selecciona el lugar buscado
                 const placeId = await listPlaces(places );
+
+                if (placeId === 0) continue;
+                                
                 const selectdPlace = places.find( l => l.id === placeId )
                 
+                //Save history
+                search.addHistory(selectdPlace.name);
                 //console.log( selectdPlace );
 
                 // Buscar datos del clima relacionados a la ciudad seleccionada
@@ -53,7 +58,13 @@ const main = async() => {
 
                 break;
             case 2:
-                console.log(opt);
+                // search.history.forEach( (place, i) => {
+                search.capitalizeHistory.forEach( (place, i) => {
+                    const idx = `${ i + 1 }.`.green;
+
+                    console.log(`${ idx } ${ place }`);
+
+                })
                 break;
         }         
 
