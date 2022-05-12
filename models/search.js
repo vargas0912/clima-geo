@@ -1,9 +1,6 @@
 const axios = require('axios');
 
-class Search {
-    history = ['Tegucigalpa', 'Madrid', 'San Jose'];
-
-
+class Search {    
     constructor(){
         //ToDo: Leer BD si existe
 
@@ -17,6 +14,16 @@ class Search {
         }
     }
 
+    get paramsOpenWeather(){
+        return {
+            'appid': process.env.OPENWEATHER_KEY,
+            'units': 'metric',
+            'language': 'en'
+        }
+    }
+
+    //Test
+
     async city(query = '' ){
         //peticion http:
         try {            
@@ -26,6 +33,7 @@ class Search {
             });
     
             const resp = await instance.get();
+            
     
             return resp.data.features.map( place => ({
                 id: place.id,
@@ -38,6 +46,30 @@ class Search {
 
         } catch (error) {
             return [];
+        }
+    }
+
+    async climateByPlace( lat, lon ) {
+        try {
+            //
+            const instance = axios.create({
+                baseURL: 'https://api.openweathermap.org/data/2.5/weather',
+                params: {...this.paramsOpenWeather, lat, lon}
+            });
+
+            const resp = await instance.get();
+
+            const {weather, main} = resp.data;
+    
+            return {
+                desc: weather[0].description,
+                min: main.temp_min, 
+                max: main.temp_max, 
+                temp: main.temp
+            }; 
+
+        } catch (error) {
+            console.log(error);
         }
     }
 }

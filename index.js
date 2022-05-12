@@ -34,18 +34,21 @@ const main = async() => {
                 const placeId = await listPlaces(places );
                 const selectdPlace = places.find( l => l.id === placeId )
                 
-                console.log( selectdPlace );
+                //console.log( selectdPlace );
 
                 // Buscar datos del clima relacionados a la ciudad seleccionada
-
+                const climate = await search.climateByPlace(selectdPlace.lat, selectdPlace.lng);
+                                
                 // Mostrar resultados
+                console.clear();
                 console.log('\nInformation City\n'.green);
-                console.log('City:', selectdPlace.name);
+                console.log('City:', selectdPlace.name.green);
                 console.log('Lat:', selectdPlace.lat);
                 console.log('Lng:', selectdPlace.lng);
-                console.log('Temperature:', );
-                console.log('Min:', );
-                console.log('Max:', );
+                console.log('Temperature:', climate.temp);
+                console.log('Min:', climate.min);
+                console.log('Max:', climate.max);
+                console.log('Conditions: ', climate.desc.green);
                  
 
                 break;
